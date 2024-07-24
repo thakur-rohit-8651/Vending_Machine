@@ -1,0 +1,40 @@
+`timescale 1ns / 1ps
+module vending_machine_tb;
+
+// Inputs
+reg clk;
+reg [1:0] in;
+reg rst;
+
+// Outputs
+wire out;
+wire [1:0] change;
+
+// Instantiate the vending machine
+vending_machine dut (.clk(clk), .rst(rst), .in(in), .out(out), .change(change));
+
+// Clock generation
+always #5 clk = ~clk;
+
+initial begin
+    // Initialize inputs
+    $dumpfile("vending_machine.vcd");
+    $dumpvars(0, vending_machine_tb);
+    rst = 1;
+    clk = 0;
+    in = 2'b00; // Initialize input
+    
+    #6 rst = 0;
+    
+    // Apply input sequence
+    #10 in = 2'b01; // Insert 5 rs
+    #10 in = 2'b01; // No coin
+    #10 in = 2'b10; // Insert 10 rs
+    #10 in = 2'b00; // No coin
+    #10 in = 2'b01; // Insert 5 rs
+    #10 in = 2'b00; // No coin
+    
+    #50 $finish; // End simulation
+end
+
+endmodule
